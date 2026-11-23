@@ -36,7 +36,7 @@ button:focus-visible{outline:2px solid var(--bl);outline-offset:2px}
 #chips{display:flex;gap:6px}
 /* stage */
 #stage{position:relative;min-height:0}
-.scene{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:safe center;gap:clamp(14px,3.2vh,34px);padding:clamp(14px,3vw,48px);opacity:0;visibility:hidden;overflow:hidden;text-align:center}
+.scene{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(14px,3.2vh,34px);padding:clamp(14px,3vw,48px);opacity:0;visibility:hidden;overflow:hidden;text-align:center}
 .scene.on{opacity:1;visibility:visible}
 .tag{font-family:var(--mono);font-size:.78rem;color:var(--bl);letter-spacing:.02em}
 h1{margin:0;font-weight:800;font-size:clamp(1.75rem,4.8vw,3.6rem);line-height:1.08;letter-spacing:-.025em;max-width:18ch}
@@ -158,7 +158,7 @@ ul.ck li{display:flex;gap:10px;align-items:center;font-family:var(--mono);font-s
  .cb .l{display:none}
  .cb{padding:9px 12px}
 }
-@media (max-height:620px) and (min-aspect-ratio:1/1){.scene{gap:10px}.sub{display:none}.tag{display:none}}
+@media (max-height:620px) and (min-aspect-ratio:1/1){.fit{gap:10px}.tag{display:none}}
 @media (prefers-reduced-motion:reduce){.on .a{animation-duration:.01s}}
 .scene{padding-bottom:46px}
 #foot{position:absolute;left:0;right:0;bottom:8px;text-align:center;font:.68rem var(--mono);color:#64748B;padding:0 14px;pointer-events:none;z-index:2}
@@ -169,6 +169,16 @@ ul.ck li{display:flex;gap:10px;align-items:center;font-family:var(--mono);font-s
 .on .drop::after{animation:fy 1s ease-in-out 5s forwards}
 .pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:min(580px,100%)}
 @media (max-width:760px){.scene{gap:12px;padding-bottom:52px}.led .big{font-size:1.05rem}.pair .badge{font-size:.66rem}}
+/* responsive fit: each scene scales to its stage so nothing clips or overlaps */
+.fit{display:flex;flex-direction:column;align-items:center;gap:clamp(14px,3.2vh,34px);width:100%;flex:none;transform-origin:center}
+.fit>*{min-width:0;max-width:100%}
+.scene,.scene *{overflow-wrap:break-word}
+.toast{max-width:100%}
+.ctas{width:100%;justify-content:center}
+a.cta{color:var(--tx)}
+.led .row>span:first-child{min-width:0}
+.led .row>.row{flex:none}
+@media (max-width:760px),(max-aspect-ratio:1/1){.fit{gap:12px}.node{flex-basis:auto!important}.cta{padding:11px 16px;font-size:.9rem}.ctas{gap:8px}}
 </style>
 </head>
 <body>
@@ -188,7 +198,7 @@ ul.ck li{display:flex;gap:10px;align-items:center;font-family:var(--mono);font-s
   </ul>
   <div class="stock a row" style="--d:3.4s;margin-bottom:0;background:rgba(16,185,129,.1);color:var(--tx)"><span>Feature check: Payment Link Generator</span><span class="badge paid">VERIFIED</span></div>
  </div>
- <div class="toast a" style="--d:4.8s"><b style="color:var(--em)">Pay-per-transaction only</b>—no upfront processor fees</b>—no monthly payments.</div>
+ <div class="toast a" style="--d:4.8s"><b style="color:var(--em)">Pay-per-transaction only</b>—no upfront processor fees, no monthly payments.</div>
 </section>
 
 <!-- Scene 2 -->
@@ -261,9 +271,11 @@ ul.ck li{display:flex;gap:10px;align-items:center;font-family:var(--mono);font-s
   <div class="card a" style="--d:5.9s"><div class="sm">Customer</div><div style="margin-top:6px"><span class="badge blue">🔓 Delivery Link Unlocked</span></div></div>
  </div>
  <p class="sub a" style="--d:8s;color:var(--tx);font-weight:600">MicroBurstMedia — Connect the clicks. Deliver the value.</p>
+<div class="ctas">
 <button class="cta p a" id="replay" style="--d:9s">Replay Presentation</button>
-<a href="https://microburstmedia.github.io/ecom-simulator/" class="cta p a" style="--d:9s;text-decoration:none;display:inline-block;text-align:center;color:var(--wh)">Play Ecom Simulator</a>
-<a href="https://microburstmedia.github.io/sales-campaign/?utm_source=ig&utm_medium=social&utm_content=link_in_bio&fbclid=PAZXh0bgNhZW0CMTEAcGRvZgJzcnRjBmFwcF9pZA85MzY2MTk3NDMzOTI0NTkAAaecSrmLBs2dInhsok2XqKTvXKdj_Ci0TDd-gPo1vhnkhyR8gHvYw5pTYNUpJg_aem_Y5o9CvxLvDarFPFSzlIltQ" class="cta p a" style="--d:9s;text-decoration:none;display:inline-block;text-align:center;color:var(--wh)">Access Setup Guide</a>
+<a href="https://microburstmedia.github.io/ecom-simulator/" class="cta p a" style="--d:9s;text-decoration:none;display:inline-block;text-align:center;color:var(--tx)">Play Ecom Simulator</a>
+<a href="https://microburstmedia.github.io/sales-campaign/?utm_source=ig&utm_medium=social&utm_content=link_in_bio&fbclid=PAZXh0bgNhZW0CMTEAcGRvZgJzcnRjBmFwcF9pZA85MzY2MTk3NDMzOTI0NTkAAaecSrmLBs2dInhsok2XqKTvXKdj_Ci0TDd-gPo1vhnkhyR8gHvYw5pTYNUpJg_aem_Y5o9CvxLvDarFPFSzlIltQ" class="cta p a" style="--d:9s;text-decoration:none;display:inline-block;text-align:center;color:var(--tx)">Access Setup Guide</a>
+</div>
 </section>
 <div id="foot">MicroBurstMedia • Entry-Level Setup Guide • Informational only, not financial advice.</div>
 </main>
@@ -328,7 +340,12 @@ addEventListener('keydown',e=>{
  wake();
 });
 ['pointermove','pointerdown','touchstart'].forEach(ev=>addEventListener(ev,wake,{passive:true}));
-wake();go(0);requestAnimationFrame(t=>{last=t;tick(t)});
+function fit(){scenes.forEach(s=>{const f=s.firstElementChild;f.style.transform='none';const c=getComputedStyle(s);
+ const aw=s.clientWidth-parseFloat(c.paddingLeft)-parseFloat(c.paddingRight),ah=s.clientHeight-parseFloat(c.paddingTop)-parseFloat(c.paddingBottom);
+ const k=Math.min(1,aw/Math.max(f.scrollWidth,1),ah/Math.max(f.offsetHeight,1));f.style.transform=k<.999?'scale('+k.toFixed(3)+')':'none'})}
+function initFit(){scenes.forEach(s=>{const f=document.createElement('div');f.className='fit';while(s.firstChild)f.appendChild(s.firstChild);s.appendChild(f)});
+ fit();new ResizeObserver(fit).observe($('#stage'));if(document.fonts)document.fonts.ready.then(fit)}
+initFit();wake();go(0);requestAnimationFrame(t=>{last=t;tick(t)});
 })();
 </script>
 </body>
