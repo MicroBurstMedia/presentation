@@ -7,395 +7,683 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0F172A;--card:#1E293B;--bd:#334155;--em:#10B981;--bl:#3B82F6;--am:#F59E0B;--tx:#F8FAFC;--mu:#94A3B8;
---mono:"JetBrains Mono","Fira Code",ui-monospace,Menlo,monospace;--sans:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
-color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-*,*::before,*::after{box-sizing:inherit}
-html,body{height:100%;margin:0}
-html{scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg)}
-body{display:grid;grid-template-rows:auto 1fr auto;background:radial-gradient(ellipse at 50% 0,#1a2a4a 0,var(--bg) 60%);color:var(--tx);font-family:var(--sans);overflow:hidden;touch-action:manipulation;
--webkit-font-smoothing:antialiased}
-body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.5;
-background:linear-gradient(var(--bd) 1px,transparent 1px) 0 0/48px 48px,linear-gradient(90deg,var(--bd) 1px,transparent 1px) 0 0/48px 48px;
--webkit-mask-image:radial-gradient(ellipse at center,#000 0,transparent 70%);mask-image:radial-gradient(ellipse at center,#000 0,transparent 70%);opacity:.14}
-.mono{font-family:var(--mono)}
-/* progress + controls */
-#bar{display:flex;gap:6px;padding:12px clamp(16px,3vw,40px) 0;z-index:5;transition:opacity .4s}
-#bar i{flex:1;height:3px;border-radius:2px;background:var(--bd);overflow:hidden}
-#bar b{display:block;height:100%;background:linear-gradient(90deg,var(--bl),var(--em));transform:scaleX(0);transform-origin:left}
-#ctl{display:flex;align-items:center;justify-content:center;gap:10px;padding:12px 16px 16px;z-index:5;transition:opacity .4s;flex-wrap:wrap}
-#ctl.idle{opacity:0}
-#ctl:hover,#ctl:focus-within{opacity:1}
-.intro-mode #bar,.intro-mode #ctl{opacity:0!important;pointer-events:none}
-button{font:inherit;color:var(--tx);cursor:pointer}
-.cb{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:9px 14px;font-family:var(--mono);font-size:.78rem;transition:border-color .2s,background .2s}
-.cb:hover{border-color:var(--bl)}
-.cb[aria-current="true"]{border-color:var(--bl);background:rgba(59,130,246,.16)}
-button:focus-visible{outline:2px solid var(--bl);outline-offset:2px}
-#chips{display:flex;gap:6px}
-/* stage */
-#stage{position:relative;min-height:0}
-.scene{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(14px,3.2vh,34px);padding:clamp(14px,3vw,48px);opacity:0;visibility:hidden;overflow:hidden;text-align:center}
-.scene.on{opacity:1;visibility:visible}
-.tag{font-family:var(--mono);font-size:.78rem;color:var(--bl);letter-spacing:.02em}
-h1{margin:0;font-weight:800;font-size:clamp(1.75rem,4.8vw,3.6rem);line-height:1.08;letter-spacing:-.025em;max-width:18ch}
-.wide h1{max-width:24ch}
-.sub{margin:0;color:var(--mu);font-size:clamp(1rem,1.9vw,1.35rem)}
-.a{opacity:0;transform:translateY(14px)}
-.on .a{animation:rise .7s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:var(--d,0s)}
-@keyframes rise{to{opacity:1;transform:none}}
-.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:clamp(14px,2vw,22px);text-align:left;width:100%}
-.bx{border:1px solid var(--bd);border-radius:16px;background:var(--card)}
-.sm{font-family:var(--mono);font-size:.74rem;color:var(--mu)}
-.row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.ttl{font-weight:600;font-size:clamp(1rem,1.8vw,1.2rem);margin:6px 0 2px}
-.badge{display:inline-block;font-family:var(--mono);font-size:.72rem;font-weight:600;padding:4px 9px;border-radius:999px;border:1px solid}
-.paid{color:var(--em);border-color:var(--em);background:rgba(16,185,129,.12)}
-.hold{color:var(--am);border-color:var(--am);background:rgba(245,158,11,.12)}
-.blue{color:var(--bl);border-color:var(--bl);background:rgba(59,130,246,.12)}
-/* scene 1 */
-.flow{display:flex;align-items:center;width:min(1100px,100%)}
-.node{flex:0 0 clamp(150px,19%,230px)}
-.box{padding:18px 16px;border-radius:16px;background:var(--card);border:1px solid var(--bd);text-align:left;height:100%}
-.on .box{animation:lit .6s forwards;animation-delay:var(--l)}
-@keyframes lit{to{border-color:var(--em);box-shadow:0 0 32px rgba(16,185,129,.28)}}
-.box .n{font-family:var(--mono);font-size:.74rem;color:var(--em)}
-.box h3{margin:6px 0 4px;font-size:1.05rem}
-.link{flex:1 1 30px;height:2px;background:var(--bd);position:relative}
-.link::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--em),#6ee7b7);box-shadow:0 0 14px var(--em);transform:scaleX(0);transform-origin:left}
-.link i{position:absolute;top:-4px;left:0;width:10px;height:10px;border-radius:50%;background:#fff;box-shadow:0 0 16px 4px var(--em);opacity:0}
-.on .link::after{animation:fx 1.2s ease-in-out forwards;animation-delay:var(--d)}
-.on .link i{animation:dx 1.2s ease-in-out forwards;animation-delay:var(--d)}
-@keyframes fx{to{transform:scaleX(1)}}
-@keyframes dx{0%{left:0;opacity:1}98%{opacity:1}100%{left:calc(100% - 10px);opacity:0}}
-@keyframes fy{to{transform:scaleY(1)}}
-@keyframes dy{0%{top:0;opacity:1}98%{opacity:1}100%{top:calc(100% - 10px);opacity:0}}
-/* split scenes */
-.split{display:grid;grid-template-columns:1fr clamp(50px,8vw,110px) 1fr;align-items:center;width:min(1000px,100%)}
-.split.two{grid-template-columns:1fr 1fr;gap:clamp(14px,2vw,24px);align-items:stretch}
-.conn{height:2px;background:var(--bd);position:relative}
-.conn::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--bl),var(--em));box-shadow:0 0 14px var(--bl);transform:scaleX(0);transform-origin:left}
-.conn i{position:absolute;top:-4px;left:0;width:10px;height:10px;border-radius:50%;background:#fff;box-shadow:0 0 16px 4px var(--bl);opacity:0}
-.on .conn::after{animation:fx 1s ease-in-out 1.5s forwards}
-.on .conn i{animation:dx 1s ease-in-out 1.5s forwards}
-ul.ck{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px}
-ul.ck li{display:flex;gap:10px;align-items:center;font-family:var(--mono);font-size:.85rem}
-.tick{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:rgba(16,185,129,.18);color:var(--em);font-size:.75rem;flex:none}
-.on .tick{animation:pop .4s cubic-bezier(.3,1.6,.5,1) both;animation-delay:calc(var(--d) + .25s)}
-@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
-.toast{display:inline-flex;gap:10px;align-items:center;padding:12px 16px;border-radius:12px;background:rgba(16,185,129,.12);border:1px solid var(--em);font-size:.9rem;text-align:left}
-.toast.am{background:rgba(245,158,11,.12);border-color:var(--am)}
-.big{font-family:var(--mono);font-size:clamp(1.2rem,2.6vw,1.7rem);font-weight:600}
-/* scene 3 */
-.order .bx{transition:none}
-.on .order{animation:warn .5s forwards 2s}
-@keyframes warn{to{border-color:var(--am);box-shadow:0 0 34px rgba(245,158,11,.3)}}
-.order{border:1px solid var(--bd)}
-.stock{margin:12px 0;padding:10px 12px;border-radius:10px;background:rgba(245,158,11,.1);color:var(--am);font-family:var(--mono);font-size:.82rem}
-.acts{display:grid;gap:8px;margin-top:12px}
-.act{display:flex;justify-content:space-between;gap:8px;padding:11px 13px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);font-size:.9rem;text-align:left}
-.on .act.go{animation:press .5s forwards 6.4s}
-@keyframes press{to{background:var(--em);border-color:var(--em);color:#04231a}}
-/* scene 4 */
-.week{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:12px 0}
-.week span{padding:7px 0;text-align:center;border-radius:8px;border:1px solid var(--bd);font-family:var(--mono);font-size:.78rem;color:var(--mu)}
-.on .week .thu{animation:thu .4s forwards 1.2s}
-@keyframes thu{to{border-color:var(--bl);color:var(--tx);background:rgba(59,130,246,.2)}}
-.slot{padding:9px 12px;margin-top:6px;border-radius:10px;border:1px dashed var(--bd);font-family:var(--mono);font-size:.8rem;color:var(--mu)}
-.on .slot.lk{animation:lock .5s forwards 2.2s}
-@keyframes lock{to{border:1px solid var(--bl);background:rgba(59,130,246,.18);color:var(--tx)}}
-.pulse{animation:pl 2s ease-in-out infinite 4.5s}
-@keyframes pl{50%{box-shadow:0 0 0 6px rgba(59,130,246,.18)}}
-.sw{display:grid}
-.sw>div{grid-area:1/1;display:grid;gap:8px;align-content:start}
-.sw .s2{opacity:0}
-.on .sw .s1{animation:out .4s forwards 4.2s}
-.on .sw .s2{animation:inn .5s forwards 4.5s}
-@keyframes out{to{opacity:0;transform:translateY(-8px)}}
-@keyframes inn{from{transform:translateY(8px)}to{opacity:1;transform:none}}
-.tg{width:46px;height:26px;border-radius:99px;background:var(--bd);position:relative;display:inline-block}
-.tg::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:none}
-.on .tg{animation:tgbg .4s forwards 4.3s}
-.on .tg::after{animation:knob .4s forwards 4.3s}
-@keyframes tgbg{to{background:var(--em)}}
-@keyframes knob{to{left:23px}}
-.dl{display:inline-block;padding:9px 14px;border-radius:10px;background:var(--em);color:#04231a;font-weight:600;font-size:.88rem;width:max-content}
-/* scene 5 */
-.metrics{display:grid;grid-template-columns:repeat(4,1fr);width:min(900px,100%);overflow:hidden}
-.metrics div{padding:clamp(14px,2.4vw,26px) 10px;border-left:1px solid var(--bd)}
-.metrics div:first-child{border-left:0}
-.metrics b{display:block;font-family:var(--mono);font-size:clamp(1.6rem,4vw,2.8rem);font-weight:600}
-.metrics small{color:var(--mu);font-size:.85rem}
-.ctas{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
-.cta{padding:14px 22px;border-radius:12px;font-weight:600;border:1px solid var(--bd);background:var(--card);font-size:1rem}
-.cta.p{background:var(--bl);border-color:var(--bl);box-shadow:0 0 28px rgba(59,130,246,.4)}
-.cta:hover{filter:brightness(1.12)}
-/* pause + portrait */
-.paused .scene *,.paused .scene *::before,.paused .scene *::after{animation-play-state:paused!important}
-@media (max-width:760px),(max-aspect-ratio:1/1){
- .flow{flex-direction:column;width:min(420px,100%)}
- .node{flex:none;width:100%}
- .link{flex:0 0 26px;width:2px;height:auto}
- .link::after{background:linear-gradient(180deg,var(--em),#6ee7b7);transform:scaleY(0);transform-origin:top}
- .on .link::after{animation-name:fy}
- .link i{top:0;left:-4px}
- .on .link i{animation-name:dy}
- .split{grid-template-columns:1fr;width:min(460px,100%)}
- .split.two{grid-template-columns:1fr}
- .conn{width:2px;height:24px;justify-self:center}
- .conn::after{transform:scaleY(0);transform-origin:top;background:linear-gradient(180deg,var(--bl),var(--em))}
- .on .conn::after{animation-name:fy}
- .conn i{left:-4px;top:0}
- .on .conn i{animation-name:dy}
- .metrics{grid-template-columns:1fr 1fr}
- .metrics div:nth-child(3){border-left:0}
- .metrics div:nth-child(n+3){border-top:1px solid var(--bd)}
- .box{padding:12px 14px}
- .box h3{font-size:.95rem;margin:2px 0}
- .box .sm{display:none}
- .card{padding:12px 14px}
- .cb .l{display:none}
- .cb{padding:9px 12px}
+/* ==========================================================================
+   1. GLOBAL VARIABLES & BASE STYLES
+   ========================================================================== */
+:root {
+  --bg: #0F172A;
+  --card: #1E293B;
+  --bd: #334155;
+  --em: #10B981;
+  --bl: #3B82F6;
+  --am: #F59E0B;
+  --tx: #F8FAFC;
+  --mu: #94A3B8;
+  --mono: "JetBrains Mono", "Fira Code", ui-monospace, Menlo, monospace;
+  --sans: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: dark;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
-@media (max-height:620px) and (min-aspect-ratio:1/1){.fit{gap:10px}.tag{display:none}}
-@media (prefers-reduced-motion:reduce){.on .a{animation-duration:.01s}}
-.scene{padding-bottom:46px}
-#foot{position:absolute;left:0;right:0;bottom:8px;text-align:center;font:.68rem var(--mono);color:#64748B;padding:0 14px;pointer-events:none;z-index:2}
-.led{display:grid;gap:12px}
-.led .row{flex-wrap:nowrap}
-.drop{width:2px;height:clamp(14px,3vh,28px);background:var(--bd);position:relative;margin:-6px 0}
-.drop::after{content:"";position:absolute;inset:0;background:var(--em);box-shadow:0 0 14px var(--em);transform:scaleY(0);transform-origin:top}
-.on .drop::after{animation:fy 1s ease-in-out 5s forwards}
-.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:min(580px,100%)}
-@media (max-width:760px){.scene{gap:12px;padding-bottom:52px}.led .big{font-size:1.05rem}.pair .badge{font-size:.66rem}}
-/* responsive fit: each scene scales to its stage so nothing clips or overlaps */
-.fit{display:flex;flex-direction:column;align-items:center;gap:clamp(14px,3.2vh,34px);width:100%;flex:none;transform-origin:center}
-.fit>*{min-width:0;max-width:100%}
-.scene,.scene *{overflow-wrap:break-word}
-.toast{max-width:100%}
-.ctas{width:100%;justify-content:center}
-a.cta{color:var(--tx)}
-.led .row>span:first-child{min-width:0}
-.led .row>.row{flex:none}
-@media (max-width:760px),(max-aspect-ratio:1/1){.fit{gap:12px}.node{flex-basis:auto!important}.cta{padding:11px 16px;font-size:.9rem}.ctas{gap:8px}}
-.cb:disabled{opacity:.35;cursor:default}.cb:disabled:hover{border-color:var(--bd)}
-.mode{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:8px 12px;font-family:var(--mono);font-size:.78rem;color:var(--mu)}
-.mode:hover{border-color:var(--bl)}
-.mode i{width:36px;height:20px;border-radius:99px;background:var(--bd);position:relative;transition:background .2s}
-.mode i::after{content:"";position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .2s}
-.mode[aria-checked="true"] i{background:var(--em)}
-.mode[aria-checked="true"] i::after{transform:translateX(16px)}
-.mode[aria-checked="true"] .la,.mode[aria-checked="false"] .lm{color:var(--tx)}
-.intro ul.ck li{align-items:center}
-.intro ul.ck .badge{min-width:4.6rem;text-align:center}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+html {
+  scroll-padding-top: env(safe-area-inset-top, 0px);
+  background: var(--bg);
+}
+
+body {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  background: radial-gradient(ellipse at 50% 0, #1a2a4a 0, var(--bg) 60%);
+  color: var(--tx);
+  font-family: var(--sans);
+  overflow: hidden;
+  touch-action: manipulation;
+  -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .5;
+  background: linear-gradient(var(--bd) 1px, transparent 1px) 0 0/48px 48px, linear-gradient(90deg, var(--bd) 1px, transparent 1px) 0 0/48px 48px;
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 0, transparent 70%);
+  mask-image: radial-gradient(ellipse at center, #000 0, transparent 70%);
+  opacity: .14;
+}
+
+.mono { font-family: var(--mono); }
+
+/* ==========================================================================
+   2. PROGRESS BAR & CONTROLS
+   ========================================================================== */
+#bar {
+  display: flex;
+  gap: 6px;
+  padding: 12px clamp(16px, 3vw, 40px) 0;
+  z-index: 5;
+  transition: opacity .4s;
+}
+
+#bar i {
+  flex: 1;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--bd);
+  overflow: hidden;
+}
+
+#bar b {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--bl), var(--em));
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+#ctl {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 16px 16px;
+  z-index: 5;
+  transition: opacity .4s;
+  flex-wrap: wrap;
+}
+
+#ctl.idle { opacity: 0; }
+#ctl:hover, #ctl:focus-within { opacity: 1; }
+.intro-mode #bar, .intro-mode #ctl { opacity: 0 !important; pointer-events: none; }
+
+button { font: inherit; color: var(--tx); cursor: pointer; }
+
+.cb {
+  background: var(--card);
+  border: 1px solid var(--bd);
+  border-radius: 10px;
+  padding: 9px 14px;
+  font-family: var(--mono);
+  font-size: .78rem;
+  transition: border-color .2s, background .2s;
+}
+
+.cb:hover { border-color: var(--bl); }
+.cb[aria-current="true"] { border-color: var(--bl); background: rgba(59,130,246,.16); }
+button:focus-visible { outline: 2px solid var(--bl); outline-offset: 2px; }
+
+#chips { display: flex; gap: 6px; }
+
+/* ==========================================================================
+   3. DESKTOP VIEW STYLES & LAYOUTS
+   ========================================================================== */
+#stage { position: relative; min-height: 0; }
+
+.scene {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(14px, 3.2vh, 34px);
+  padding: clamp(14px, 3vw, 48px);
+  opacity: 0;
+  visibility: hidden;
+  overflow: hidden;
+  text-align: center;
+  padding-bottom: 46px;
+}
+
+.scene.on { opacity: 1; visibility: visible; }
+
+.tag { font-family: var(--mono); font-size: .78rem; color: var(--bl); letter-spacing: .02em; }
+
+h1 {
+  margin: 0;
+  font-weight: 800;
+  font-size: clamp(1.75rem, 4.8vw, 3.6rem);
+  line-height: 1.08;
+  letter-spacing: -.025em;
+  max-width: 18ch;
+}
+
+.wide h1 { max-width: 24ch; }
+
+.sub { margin: 0; color: var(--mu); font-size: clamp(1rem, 1.9vw, 1.35rem); }
+.a { opacity: 0; transform: translateY(14px); }
+.on .a { animation: rise .7s cubic-bezier(.2,.8,.2,1) forwards; animation-delay: var(--d,0s); }
+
+@keyframes rise {
+  to { opacity: 1; transform: none; }
+}
+
+.card { background: var(--card); border: 1px solid var(--bd); border-radius: 16px; padding: clamp(14px, 2vw, 22px); text-align: left; width: 100%; }
+.bx { border: 1px solid var(--bd); border-radius: 16px; background: var(--card); }
+.sm { font-family: var(--mono); font-size: .74rem; color: var(--mu); }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.ttl { font-weight: 600; font-size: clamp(1rem, 1.8vw, 1.2rem); margin: 6px 0 2px; }
+.badge { display: inline-block; font-family: var(--mono); font-size: .72rem; font-weight: 600; padding: 4px 9px; border-radius: 999px; border: 1px solid; }
+
+.paid { color: var(--em); border-color: var(--em); background: rgba(16,185,129,.12); }
+.hold { color: var(--am); border-color: var(--am); background: rgba(245,158,11,.12); }
+.blue { color: var(--bl); border-color: var(--bl); background: rgba(59,130,246,.12); }
+
+/* Scene 1 Flow */
+.flow { display: flex; align-items: center; width: min(1100px, 100%); }
+.node { flex: 0 0 clamp(150px, 19%, 230px); }
+.box { padding: 18px 16px; border-radius: 16px; background: var(--card); border: 1px solid var(--bd); text-align: left; height: 100%; }
+.on .box { animation: lit .6s forwards; animation-delay: var(--l); }
+
+@keyframes lit {
+  to { border-color: var(--em); box-shadow: 0 0 32px rgba(16,185,129,.28); }
+}
+
+.box .n { font-family: var(--mono); font-size: .74rem; color: var(--em); }
+.box h3 { margin: 6px 0 4px; font-size: 1.05rem; }
+
+.link { flex: 1 1 30px; height: 2px; background: var(--bd); position: relative; }
+.link::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, var(--em), #6ee7b7); box-shadow: 0 0 14px var(--em); transform: scaleX(0); transform-origin: left; }
+.link i { position: absolute; top: -4px; left: 0; width: 10px; height: 10px; border-radius: 50%; background: #fff; box-shadow: 0 0 16px 4px var(--em); opacity: 0; }
+
+.on .link::after { animation: fx 1.2s ease-in-out forwards; animation-delay: var(--d); }
+.on .link i { animation: dx 1.2s ease-in-out forwards; animation-delay: var(--d); }
+
+@keyframes fx { to { transform: scaleX(1); } }
+@keyframes dx { 0% { left: 0; opacity: 1; } 98% { opacity: 1; } 100% { left: calc(100% - 10px); opacity: 0; } }
+@keyframes fy { to { transform: scaleY(1); } }
+@keyframes dy { 0% { top: 0; opacity: 1; } 98% { opacity: 1; } 100% { top: calc(100% - 10px); opacity: 0; } }
+
+/* Split Scenes */
+.split { display: grid; grid-template-columns: 1fr clamp(50px, 8vw, 110px) 1fr; align-items: center; width: min(1000px, 100%); }
+.split.two { grid-template-columns: 1fr 1fr; gap: clamp(14px, 2vw, 24px); align-items: stretch; }
+
+.conn { height: 2px; background: var(--bd); position: relative; }
+.conn::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, var(--bl), var(--em)); box-shadow: 0 0 14px var(--bl); transform: scaleX(0); transform-origin: left; }
+.conn i { position: absolute; top: -4px; left: 0; width: 10px; height: 10px; border-radius: 50%; background: #fff; box-shadow: 0 0 16px 4px var(--bl); opacity: 0; }
+
+.on .conn::after { animation: fx 1s ease-in-out 1.5s forwards; }
+.on .conn i { animation: dx 1s ease-in-out 1.5s forwards; }
+
+ul.ck { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 8px; }
+ul.ck li { display: flex; gap: 10px; align-items: center; font-family: var(--mono); font-size: .85rem; }
+
+.tick { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: rgba(16,185,129,.18); color: var(--em); font-size: .75rem; flex: none; }
+.on .tick { animation: pop .4s cubic-bezier(.3,1.6,.5,1) both; animation-delay: calc(var(--d) + .25s); }
+
+@keyframes pop { from { transform: scale(0); } to { transform: scale(1); } }
+
+.toast { display: inline-flex; gap: 10px; align-items: center; padding: 12px 16px; border-radius: 12px; background: rgba(16,185,129,.12); border: 1px solid var(--em); font-size: .9rem; text-align: left; }
+.toast.am { background: rgba(245,158,11,.12); border-color: var(--am); }
+.big { font-family: var(--mono); font-size: clamp(1.2rem, 2.6vw, 1.7rem); font-weight: 600; }
+
+/* Scene 3 Order Elements */
+.order .bx { transition: none; }
+.on .order { animation: warn .5s forwards 2s; }
+
+@keyframes warn { to { border-color: var(--am); box-shadow: 0 0 34px rgba(245,158,11,.3); } }
+
+.order { border: 1px solid var(--bd); }
+.stock { margin: 12px 0; padding: 10px 12px; border-radius: 10px; background: rgba(245,158,11,.1); color: var(--am); font-family: var(--mono); font-size: .82rem; }
+.acts { display: grid; gap: 8px; margin-top: 12px; }
+.act { display: flex; justify-content: space-between; gap: 8px; padding: 11px 13px; border-radius: 10px; border: 1px solid var(--bd); background: var(--bg); font-size: .9rem; text-align: left; }
+.on .act.go { animation: press .5s forwards 6.4s; }
+
+@keyframes press { to { background: var(--em); border-color: var(--em); color: #04231a; } }
+
+/* Scene 4 Elements */
+.week { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin: 12px 0; }
+.week span { padding: 7px 0; text-align: center; border-radius: 8px; border: 1px solid var(--bd); font-family: var(--mono); font-size: .78rem; color: var(--mu); }
+.on .week .thu { animation: thu .4s forwards 1.2s; }
+
+@keyframes thu { to { border-color: var(--bl); color: var(--tx); background: rgba(59,130,246,.2); } }
+
+.slot { padding: 9px 12px; margin-top: 6px; border-radius: 10px; border: 1px dashed var(--bd); font-family: var(--mono); font-size: .8rem; color: var(--mu); }
+.on .slot.lk { animation: lock .5s forwards 2.2s; }
+
+@keyframes lock { to { border: 1px solid var(--bl); background: rgba(59,130,246,.18); color: var(--tx); } }
+
+.pulse { animation: pl 2s ease-in-out infinite 4.5s; }
+
+@keyframes pl { 50% { box-shadow: 0 0 0 6px rgba(59,130,246,.18); } }
+
+.sw { display: grid; }
+.sw > div { grid-area: 1/1; display: grid; gap: 8px; align-content: start; }
+.sw .s2 { opacity: 0; }
+.on .sw .s1 { animation: out .4s forwards 4.2s; }
+.on .sw .s2 { animation: inn .5s forwards 4.5s; }
+
+@keyframes out { to { opacity: 0; transform: translateY(-8px); } }
+@keyframes inn { from { transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+.tg { width: 46px; height: 26px; border-radius: 99px; background: var(--bd); position: relative; display: inline-block; }
+.tg::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: none; }
+.on .tg { animation: tgbg .4s forwards 4.3s; }
+.on .tg::after { animation: knob .4s forwards 4.3s; }
+
+@keyframes tgbg { to { background: var(--em); } }
+@keyframes knob { to { left: 23px; } }
+
+.dl { display: inline-block; padding: 9px 14px; border-radius: 10px; background: var(--em); color: #04231a; font-weight: 600; font-size: .88rem; width: max-content; }
+
+/* Scene 5 Metrics */
+.metrics { display: grid; grid-template-columns: repeat(4, 1fr); width: min(900px, 100%); overflow: hidden; }
+.metrics div { padding: clamp(14px, 2.4vw, 26px) 10px; border-left: 1px solid var(--bd); }
+.metrics div:first-child { border-left: 0; }
+.metrics b { display: block; font-family: var(--mono); font-size: clamp(1.6rem, 4vw, 2.8rem); font-weight: 600; }
+.metrics small { color: var(--mu); font-size: .85rem; }
+
+.ctas { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+.cta { padding: 14px 22px; border-radius: 12px; font-weight: 600; border: 1px solid var(--bd); background: var(--card); font-size: 1rem; }
+.cta.p { background: var(--bl); border-color: var(--bl); box-shadow: 0 0 28px rgba(59,130,246,.4); }
+.cta:hover { filter: brightness(1.12); }
+
+.paused .scene *, .paused .scene *::before, .paused .scene *::after { animation-play-state: paused !important; }
+
+/* ==========================================================================
+   4. MOBILE & PORTRAIT VIEW STYLES (MEDIA QUERIES)
+   ========================================================================== */
+@media (max-width: 760px), (max-aspect-ratio: 1/1) {
+  .flow { flex-direction: column; width: min(420px, 100%); }
+  .node { flex: none; width: 100%; }
+  .link { flex: 0 0 26px; width: 2px; height: auto; }
+  .link::after { background: linear-gradient(180deg, var(--em), #6ee7b7); transform: scaleY(0); transform-origin: top; }
+  .on .link::after { animation-name: fy; }
+  .link i { top: 0; left: -4px; }
+  .on .link i { animation-name: dy; }
+  
+  .split { grid-template-columns: 1fr; width: min(460px, 100%); }
+  .split.two { grid-template-columns: 1fr; }
+  
+  .conn { width: 2px; height: 24px; justify-self: center; }
+  .conn::after { transform: scaleY(0); transform-origin: top; background: linear-gradient(180deg, var(--bl), var(--em)); }
+  .on .conn::after { animation-name: fy; }
+  .conn i { left: -4px; top: 0; }
+  .on .conn i { animation-name: dy; }
+  
+  .metrics { grid-template-columns: 1fr 1fr; }
+  .metrics div:nth-child(3) { border-left: 0; }
+  .metrics div:nth-child(n+3) { border-top: 1px solid var(--bd); }
+  
+  .box { padding: 12px 14px; }
+  .box h3 { font-size: .95rem; margin: 2px 0; }
+  .box .sm { display: none; }
+  
+  .card { padding: 12px 14px; }
+  .cb .l { display: none; }
+  .cb { padding: 9px 12px; }
+}
+
+@media (max-height: 620px) and (min-aspect-ratio: 1/1) {
+  .fit { gap: 10px; }
+  .tag { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .on .a { animation-duration: .01s; }
+}
+
+#foot { text-align: center; font: .68rem/1.5 var(--mono); color: #8393A9; padding: 4px 16px 12px; }
+.led { display: grid; gap: 12px; }
+.led .row { flex-wrap: nowrap; }
+
+.drop { width: 2px; height: clamp(14px, 3vh, 28px); background: var(--bd); position: relative; margin: -6px 0; }
+.drop::after { content: ""; position: absolute; inset: 0; background: var(--em); box-shadow: 0 0 14px var(--em); transform: scaleY(0); transform-origin: top; }
+.on .drop::after { animation: fy 1s ease-in-out 5s forwards; }
+
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: min(580px, 100%); }
+
+@media (max-width: 760px) {
+  .scene { gap: 12px; }
+  .led .big { font-size: 1.05rem; }
+  .pair .badge { font-size: .66rem; }
+}
+
+/* Responsive Scaling and Fitting Helpers */
+.fit { display: flex; flex-direction: column; align-items: center; gap: clamp(14px, 3.2vh, 34px); width: 100%; flex: none; transform-origin: center; }
+.fit > * { min-width: 0; max-width: 100%; }
+.scene, .scene * { overflow-wrap: break-word; }
+.toast { max-width: 100%; }
+.ctas { width: 100%; justify-content: center; }
+a.cta { color: var(--tx); }
+.led .row > span:first-child { min-width: 0; }
+.led .row > .row { flex: none; }
+
+@media (max-width: 760px), (max-aspect-ratio: 1/1) {
+  .fit { gap: 12px; }
+  .node { flex-basis: auto !important; }
+  .cta { padding: 11px 16px; font-size: .9rem; }
+  .ctas { gap: 8px; }
+}
+
+.cb:disabled { opacity: .35; cursor: default; }
+.cb:disabled:hover { border-color: var(--bd); }
+
+.mode { display: flex; align-items: center; gap: 8px; background: var(--card); border: 1px solid var(--bd); border-radius: 10px; padding: 8px 12px; font-family: var(--mono); font-size: .78rem; color: var(--mu); }
+.mode:hover { border-color: var(--bl); }
+.mode i { width: 36px; height: 20px; border-radius: 99px; background: var(--bd); position: relative; transition: background .2s; }
+.mode i::after { content: ""; position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; border-radius: 50%; background: #fff; transition: transform .2s; }
+.mode[aria-checked="true"] i { background: var(--em); }
+.mode[aria-checked="true"] i::after { transform: translateX(16px); }
+.mode[aria-checked="true"] .la, .mode[aria-checked="false"] .lm { color: var(--tx); }
+
+.intro ul.ck li { align-items: center; }
+.intro ul.ck .badge { min-width: 4.6rem; text-align: center; }
+.hd2 { margin: 0; font-weight: 800; font-size: clamp(1.3rem, 3.4vw, 2.1rem); line-height: 1.15; letter-spacing: -.02em; max-width: 26ch; }
+
+@media (max-width: 760px), (max-aspect-ratio: 1/1) {
+  #ctl { gap: 6px; padding: 8px 10px 6px; }
+  #chips { gap: 4px; }
+  .cb { padding: 8px 10px; }
+  .mode { padding: 7px 10px; }
+}
 </style>
 </head>
 <body class="intro-mode">
+
+<!-- ==========================================================================
+   5. HTML STRUCTURE & SCENES
+   ========================================================================== -->
 <div id="bar" aria-hidden="true"><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i></div>
 
 <main id="stage">
-<!-- Intro -->
-<section class="scene intro wide">
- <div class="tag a" style="--d:.1s">MicroBurstMedia • an AI Tech Startup Presents:</div>
- <h1 class="a" style="--d:.2s">Interlink Automation</h1>
- <h2 class="a" style="--d:.2s">Where Workflows Are Built for Business Operations and System Processing</h2>
- <p class="sub a" style="--d:.5s;max-width:48ch">Learn how we assemble an e-commerce workflow with use of a social media bio, a landing page and a payment processor together into a fixed pathway that collects payment, delivers instantly and pays out to your business bank online.</p>
- <div class="card a" style="--d:.8s;max-width:580px">
-  <div class="ttl" style="margin:0 0 4px">What you’ll see</div>
-  <ul class="ck">
-   <li class="a" style="--d:1s"><span class="badge blue">Step 0</span>Verify your payment processor</li>
-   <li class="a" style="--d:1.12s"><span class="badge blue">Step 1</span>Gate your delivery inside a payment link</li>
-   <li class="a" style="--d:1.24s"><span class="badge blue">Step 2</span>Connect landing page and social bio</li>
-   <li class="a" style="--d:1.36s"><span class="badge paid">Result</span>Automatic fee split and bank payout</li>
-  </ul>
- </div>
- <div class="ctas a" style="--d:1.6s"><button class="cta p" id="start">Start Presentation</button></div>
- <p class="sm a" style="--d:1.8s;margin:0">About 50 seconds. Watch on auto-play or switch to manual.</p>
-</section>
-<!-- Scene 1 -->
-<section class="scene">
- <div class="tag a" style="--d:.1s">Before Setting Up</div>
- <h1 class="a" style="--d:.2s">Step 0: Verify Your Payment Processor.</h1>
- <p class="sub a" style="--d:.5s">Designed for established startups ready to automate—no monthly overhead.</p>
- <div class="card a" style="--d:.8s;max-width:580px">
-  <div class="row"><span class="ttl" style="margin:0">System readiness check</span><span class="badge hold">PREREQUISITES</span></div>
-  <ul class="ck" style="gap:12px">
-   <li class="a" style="--d:1.4s"><span class="tick" style="--d:1.4s">✓</span>Business Credentials Required</li>
-   <li class="a" style="--d:2.4s"><span class="tick" style="--d:2.4s">✓</span>Payment Processor Active</li>
-  </ul>
-  <div class="stock a row" style="--d:3.4s;margin-bottom:0;background:rgba(16,185,129,.1);color:var(--tx)"><span>Feature check: Payment Link Generator</span><span class="badge paid">VERIFIED</span></div>
- </div>
- <div class="toast a" style="--d:4.8s"><b style="color:var(--em)">Pay-per-transaction only</b>—no upfront processor fees, no monthly payments.</div>
-</section>
+  <!-- Intro Scene -->
+  <section class="scene intro wide">
+    <div class="tag a" style="--d:.1s">MicroBurstMedia • an AI Tech Startup Presents:</div>
+    <h1 class="a" style="--d:.2s">Interlink Automation</h1>
+    <h2 class="a" style="--d:.2s">Where Workflows Are Built for Business Operations and System Processing</h2>
+    <p class="sub a" style="--d:.5s;max-width:48ch">Learn how we assemble an e-commerce workflow with use of a social media bio, a landing page and a payment processor together into a fixed pathway that collects payment, delivers instantly and pays out to your business bank online.</p>
+    <div class="card a" style="--d:.8s;max-width:580px">
+      <div class="ttl" style="margin:0 0 4px">What you’ll see</div>
+      <ul class="ck">
+        <li class="a" style="--d:1s"><span class="badge blue">Step 0</span>Verify your payment processor</li>
+        <li class="a" style="--d:1.12s"><span class="badge blue">Step 1</span>Gate your delivery inside a payment link</li>
+        <li class="a" style="--d:1.24s"><span class="badge blue">Step 2</span>Connect landing page and social bio</li>
+        <li class="a" style="--d:1.36s"><span class="badge paid">Result</span>Automatic fee split and bank payout</li>
+      </ul>
+    </div>
+    <div class="ctas a" style="--d:1.6s"><button class="cta p" id="start">Start Presentation</button></div>
+    <p class="sm a" style="--d:1.8s;margin:0">About 50 seconds. Watch on auto-play or switch to manual.</p>
+  </section>
 
-<!-- Scene 2 -->
-<section class="scene">
- <div class="tag a" style="--d:.1s">Asset hosting and self-checkout</div>
- <h1 class="a" style="--d:.2s">Step 1: Gatekeep Your Delivery Inside a Payment Link.</h1>
- <div class="split">
-  <div class="card a" style="--d:.5s">
-   <div class="row"><span class="sm">Delivery page</span><span class="badge paid">Ready</span></div>
-   <div class="ttl">Free Cloud Storage Drive</div>
-   <div class="sm">or Scheduling Page</div>
-   <div class="slot" style="margin-top:12px;color:var(--bl);border-style:solid">drive.link/digital-asset-v1</div>
-  </div>
-  <div class="conn"><i></i></div>
-  <div class="card a" style="--d:.9s">
-   <div class="row"><span class="sm">Self-checkout page</span><span class="badge blue">PAYWALL</span></div>
-   <div class="ttl">Payment Link Generator</div>
-   <div class="slot a" style="--d:2.7s;margin:8px 0 12px;color:var(--em);border-style:solid;word-break:break-all">pay.link/checkout → drive.link/digital-asset-v1</div>
-   <div class="sw">
-    <div class="s1"><span class="badge hold">Status: Locked Until Paid</span></div>
-    <div class="s2"><span class="badge paid">Auto-Redirects Upon Approval</span></div>
-   </div>
-  </div>
- </div>
-</section>
+  <!-- Scene 1: Step 0 -->
+  <section class="scene">
+    <div class="tag a" style="--d:.1s">Before Setting Up</div>
+    <h1 class="a" style="--d:.2s">Step 0: Verify Your Payment Processor.</h1>
+    <p class="sub a" style="--d:.5s">Designed for established startups ready to automate—no monthly overhead.</p>
+    <div class="card a" style="--d:.8s;max-width:580px">
+      <div class="row"><span class="ttl" style="margin:0">System readiness check</span><span class="badge hold">PREREQUISITES</span></div>
+      <ul class="ck" style="gap:12px">
+        <li class="a" style="--d:1.4s"><span class="tick" style="--d:1.4s">✓</span>Business Credentials Required</li>
+        <li class="a" style="--d:2.4s"><span class="tick" style="--d:2.4s">✓</span>Payment Processor Active</li>
+      </ul>
+      <div class="stock a row" style="--d:3.4s;margin-bottom:0;background:rgba(16,185,129,.1);color:var(--tx)"><span>Feature check: Payment Link Generator</span><span class="badge paid">VERIFIED</span></div>
+    </div>
+    <div class="toast a" style="--d:4.8s"><b style="color:var(--em)">Pay-per-transaction only</b>—no upfront processor fees, no monthly payments.</div>
+  </section>
 
-<!-- Scene 3 -->
-<section class="scene wide">
- <div class="tag a" style="--d:.1s">Landing page and social bio</div>
- <h1 class="a" style="--d:.2s">Step 2: Connect Checkout to Landing Page &amp; Social Bio.</h1>
- <div class="flow">
-  <div class="node a" style="--d:.5s;flex-basis:clamp(150px,26%,260px)"><div class="box" style="--l:1s"><div class="n">Traffic</div><h3>Social Bio</h3><div class="sm">Bio Link</div></div></div>
-  <div class="link" style="--d:1.2s"><i></i></div>
-  <div class="node a" style="--d:.65s;flex-basis:clamp(150px,26%,260px)"><div class="box" style="--l:2.4s"><div class="n">Sales</div><h3>Host Landing Page</h3><div class="sm">CTA button</div></div></div>
-  <div class="link" style="--d:2.6s"><i></i></div>
-  <div class="node a" style="--d:.8s;flex-basis:clamp(150px,26%,260px)"><div class="box" style="--l:3.8s"><div class="n">Self-checkout</div><h3>Payment Link</h3><div class="sm">Locked until paid</div></div></div>
- </div>
- <div class="toast a" style="--d:4.6s;max-width:560px"><span><b style="color:var(--em)">Payment Link</b> goes into the primary CTA button on your Host Landing Page.</span></div>
- <div class="toast a" style="--d:6.4s;max-width:560px;background:rgba(59,130,246,.12);border-color:var(--bl)"><span><b style="color:var(--bl)">Landing Page URL</b> goes into the Bio Link of your highest-traffic social profile.</span></div>
-</section>
+  <!-- Scene 2: Step 1 -->
+  <section class="scene">
+    <div class="tag a" style="--d:.1s">Asset hosting and self-checkout</div>
+    <h1 class="a" style="--d:.2s">Step 1: Gatekeep Your Delivery Inside a Payment Link.</h1>
+    <div class="split">
+      <div class="card a" style="--d:.5s">
+        <div class="row"><span class="sm">Delivery page</span><span class="badge paid">Ready</span></div>
+        <div class="ttl">Free Cloud Storage Drive</div>
+        <div class="sm">or Scheduling Page</div>
+        <div class="slot" style="margin-top:12px;color:var(--bl);border-style:solid">drive.link/digital-asset-v1</div>
+      </div>
+      <div class="conn"><i></i></div>
+      <div class="card a" style="--d:.9s">
+        <div class="row"><span class="sm">Self-checkout page</span><span class="badge blue">PAYWALL</span></div>
+        <div class="ttl">Payment Link Generator</div>
+        <div class="slot a" style="--d:2.7s;margin:8px 0 12px;color:var(--em);border-style:solid;word-break:break-all">pay.link/checkout → drive.link/digital-asset-v1</div>
+        <div class="sw">
+          <div class="s1"><span class="badge hold">Status: Locked Until Paid</span></div>
+          <div class="s2"><span class="badge paid">Auto-Redirects Upon Approval</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<!-- Scene 4 -->
-<section class="scene wide">
- <div class="tag a" style="--d:.1s">End-to-end flow</div>
- <h1 class="a" style="--d:.2s">The Complete Entry-Level Interlink Pathway.</h1>
- <p class="sub a" style="--d:.5s">A simulated customer buys. Watch every link light up.</p>
- <div class="flow">
-  <div class="node a" style="--d:.6s"><div class="box" style="--l:1.2s"><div class="n">01</div><h3>Social Bio</h3><div class="sm">Traffic</div></div></div>
-  <div class="link" style="--d:1.4s"><i></i></div>
-  <div class="node a" style="--d:.72s"><div class="box" style="--l:3s"><div class="n">02</div><h3>Host Landing Page</h3><div class="sm">Sales</div></div></div>
-  <div class="link" style="--d:3.2s"><i></i></div>
-  <div class="node a" style="--d:.84s"><div class="box" style="--l:4.8s"><div class="n">03</div><h3>Payment Link</h3><div class="sm">Self-Checkout</div></div></div>
-  <div class="link" style="--d:5s"><i></i></div>
-  <div class="node a" style="--d:.96s"><div class="box" style="--l:6.6s"><div class="n">04</div><h3>Cloud Drive / Booking</h3><div class="sm">Instant Delivery</div></div></div>
- </div>
- <div class="toast a" style="--d:7.8s"><b style="color:var(--em)">Delivered ✓</b> Purchase complete. No manual steps.</div>
-</section>
+  <!-- Scene 3: Step 2 -->
+  <section class="scene wide">
+    <div class="tag a" style="--d:.1s">Landing page and social bio</div>
+    <h1 class="a" style="--d:.2s">Step 2: Connect Checkout to Landing Page &amp; Social Bio.</h1>
+    <div class="flow">
+      <div class="node a" style="--d:.5s;flex-basis:clamp(150px,26%,260px)"><div class="box" style="--l:1s"><div class="n">Traffic</div><h3>Social Bio</h3><div class="sm">Bio Link</div></div></div>
+      <div class="link" style="--d:1.2s"><i></i></div>
+      <div class="node a" style="--d:.65s;flex-basis:clamp(150px,26%,260px)"><div class="box" style="--l:2.4s"><div class="n">Sales</div><h3>Host Landing Page</h3><div class="sm">CTA button</div></div></div>
+      <div class="link" style="--d:2.6s"><i></i></div>
+      <div class="node a" style="--d:.8s;flex-basis:clamp(150px,26%,260px)"><div class="box" style="--l:3.8s"><div class="n">Self-checkout</div><h3>Payment Link</h3><div class="sm">Locked until paid</div></div></div>
+    </div>
+    <div class="toast a" style="--d:4.6s;max-width:560px"><span><b style="color:var(--em)">Payment Link</b> goes into the primary CTA button on your Host Landing Page.</span></div>
+    <div class="toast a" style="--d:6.4s;max-width:560px;background:rgba(59,130,246,.12);border-color:var(--bl)"><span><b style="color:var(--bl)">Landing Page URL</b> goes into the Bio Link of your highest-traffic social profile.</span></div>
+  </section>
 
-<!-- Scene 5 -->
-<section class="scene">
- <h1 class="a" style="--d:.2s">Zero Manual Math. Direct Bank Payouts.</h1>
- <div class="card led a" style="--d:.6s;max-width:580px">
-  <div class="row a" style="--d:1.2s"><span>Customer Payment Approved</span><span class="row" style="gap:10px"><span class="big">$100.00</span><span class="badge paid">APPROVED</span></span></div>
-  <div class="row a" style="--d:2.6s"><span>Processor Service Fee<br><span class="sm">Auto-Deducted</span></span><span class="big" style="color:var(--am)">-$3.20</span></div>
-  <div class="row a" style="--d:4s;border-top:1px solid var(--bd);padding-top:10px"><span>Net Profit Deposited</span><span class="big" style="color:var(--em)">+$96.80</span></div>
- </div>
- <div class="drop"></div>
- <div class="pair">
-  <div class="card a" style="--d:5.6s"><div class="sm">Business Bank Account</div><div style="margin-top:6px"><span class="badge paid">Payout Scheduled</span></div></div>
-  <div class="card a" style="--d:5.9s"><div class="sm">Customer</div><div style="margin-top:6px"><span class="badge blue">🔓 Delivery Link Unlocked</span></div></div>
- </div>
- <p class="sub a" style="--d:8s;color:var(--tx);font-weight:600">MicroBurstMedia — Connect the clicks. Deliver the value.</p>
-<div class="ctas">
-<button class="cta p a" id="replay" style="--d:9s">Replay Presentation</button>
-<a href="https://microburstmedia.github.io/ecom-simulator/" class="cta p a" style="--d:9s;text-decoration:none;display:inline-block;text-align:center;color:var(--tx)">Play Ecom Simulator</a>
-<a href="https://microburstmedia.github.io/sales-campaign/?utm_source=ig&utm_medium=social&utm_content=link_in_bio&fbclid=PAZXh0bgNhZW0CMTEAcGRvZgJzcnRjBmFwcF9pZA85MzY2MTk3NDMzOTI0NTkAAaecSrmLBs2dInhsok2XqKTvXKdj_Ci0TDd-gPo1vhnkhyR8gHvYw5pTYNUpJg_aem_Y5o9CvxLvDarFPFSzlIltQ" class="cta p a" style="--d:9s;text-decoration:none;display:inline-block;text-align:center;color:var(--tx)">Access Setup Guide</a>
-</div>
-</section>
-<div id="foot">© 2026 Digital Marketing Network, MicroBurstMedia • Designed for Business Purposes • Informational only, not financial advice.</div>
+  <!-- Scene 4: Pathway -->
+  <section class="scene wide">
+    <div class="tag a" style="--d:.1s">End-to-end flow</div>
+    <h1 class="a" style="--d:.2s">The Complete Entry-Level Interlink Pathway.</h1>
+    <p class="sub a" style="--d:.5s">A simulated customer buys. Watch every link light up.</p>
+    <div class="flow">
+      <div class="node a" style="--d:.6s"><div class="box" style="--l:1.2s"><div class="n">01</div><h3>Social Bio</h3><div class="sm">Traffic</div></div></div>
+      <div class="link" style="--d:1.4s"><i></i></div>
+      <div class="node a" style="--d:.72s"><div class="box" style="--l:3s"><div class="n">02</div><h3>Host Landing Page</h3><div class="sm">Sales</div></div></div>
+      <div class="link" style="--d:3.2s"><i></i></div>
+      <div class="node a" style="--d:.84s"><div class="box" style="--l:4.8s"><div class="n">03</div><h3>Payment Link</h3><div class="sm">Self-Checkout</div></div></div>
+      <div class="link" style="--d:5s"><i></i></div>
+      <div class="node a" style="--d:.96s"><div class="box" style="--l:6.6s"><div class="n">04</div><h3>Cloud Drive / Booking</h3><div class="sm">Instant Delivery</div></div></div>
+    </div>
+    <div class="toast a" style="--d:7.8s"><b style="color:var(--em)">Delivered ✓</b> Purchase complete. No manual steps.</div>
+  </section>
+
+  <!-- Scene 5: Payout -->
+  <section class="scene">
+    <h1 class="a" style="--d:.2s">Zero Manual Math. Direct Bank Payouts.</h1>
+    <div class="card led a" style="--d:.6s;max-width:580px">
+      <div class="row a" style="--d:1.2s"><span>Customer Payment Approved</span><span class="row" style="gap:10px"><span class="big">$100.00</span><span class="badge paid">APPROVED</span></span></div>
+      <div class="row a" style="--d:2.6s"><span>Processor Service Fee<br><span class="sm">Auto-Deducted</span></span><span class="big" style="color:var(--am)">-$3.20</span></div>
+      <div class="row a" style="--d:4s;border-top:1px solid var(--bd);padding-top:10px"><span>Net Profit Deposited</span><span class="big" style="color:var(--em)">+$96.80</span></div>
+    </div>
+    <div class="drop"></div>
+    <div class="pair">
+      <div class="card a" style="--d:5.6s"><div class="sm">Business Bank Account</div><div style="margin-top:6px"><span class="badge paid">Payout Scheduled</span></div></div>
+      <div class="card a" style="--d:5.9s"><div class="sm">Customer</div><div style="margin-top:6px"><span class="badge blue">🔓 Delivery Link Unlocked</span></div></div>
+    </div>
+    <p class="sub a" style="--d:8s;color:var(--tx);font-weight:600">MicroBurstMedia — Connect the clicks. Deliver the value.</p>
+    <div class="ctas">
+      <button class="cta p a" id="replay" style="--d:9s">Replay Presentation</button>
+      <a href="https://microburstmedia.github.io/ecom-simulator/" class="cta p a" style="--d:9s;text-decoration:none;display:inline-block;text-align:center;color:var(--tx)">Play Ecom Simulator</a>
+      <a href="https://microburstmedia.github.io/sales-campaign/?utm_source=ig&utm_medium=social&utm_content=link_in_bio&fbclid=PAZXh0bgNhZW0CMTEAcGRvZgJzcnRjBmFwcF9pZA85MzY2MTk3NDMzOTI0NTkAAaecSrmLBs2dInhsok2XqKTvXKdj_Ci0TDd-gPo1vhnkhyR8gHvYw5pTYNUpJg_aem_Y5o9CvxLvDarFPFSzlIltQ" class="cta p a" style="--d:9s;text-decoration:none;display:inline-block;text-align:center;color:var(--tx)">Access Setup Guide</a>
+    </div>
+  </section>
+  <div id="foot">© 2026 Digital Marketing Network, MicroBurstMedia • Designed for Business Purposes • Informational only, not financial advice.</div>
 </main>
 
+<!-- ==========================================================================
+   6. NAVIGATION CONTROLS
+   ========================================================================== -->
 <nav id="ctl" aria-label="Presentation controls">
- <button class="cb" id="home" aria-label="Back to introduction">⌂</button>
- <button class="cb" id="prev" aria-label="Previous scene">‹</button>
- <button class="cb" id="pp" aria-label="Pause">❚❚</button>
- <div id="chips"></div>
- <button class="cb" id="next" aria-label="Next scene">›</button>
- <button class="mode" id="mode" role="switch" aria-checked="true" aria-label="Auto-play"><span class="lm">Manual</span><i></i><span class="la">Auto</span></button>
+  <button class="cb" id="home" aria-label="Back to introduction">⌂</button>
+  <button class="cb" id="prev" aria-label="Previous scene">‹</button>
+  <button class="cb" id="pp" aria-label="Pause">❚❚</button>
+  <div id="chips"></div>
+  <button class="cb" id="next" aria-label="Next scene">›</button>
+  <button class="mode" id="mode" role="switch" aria-checked="true" aria-label="Auto-play"><span class="lm">Manual</span><i></i><span class="la">Auto</span></button>
 </nav>
 
+<!-- ==========================================================================
+   7. INTERACTIVE JAVASCRIPT ENGINE
+   ========================================================================== -->
 <script>
 (()=>{
 const D=[7,9,10,11,13],NAMES=["Check","Gate","Connect","Pathway","Payout"];
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const all=$$('.scene'),intro=$('.intro'),scenes=$$('.scene:not(.intro)'),segs=$$('#bar b'),pp=$('#pp'),ctl=$('#ctl'),chips=$('#chips'),prev=$('#prev'),next=$('#next'),mode=$('#mode');
 let cur=0,el=0,playing=true,ended=false,auto=true,started=false,last=performance.now(),idle,timers=[];
-NAMES.forEach((n,i)=>{const b=document.createElement('button');b.className='cb';
- b.innerHTML='0'+(i+1)+' <span class="l">'+n+'</span>';b.onclick=()=>go(i);chips.appendChild(b)});
-function counts(){
- timers.forEach(clearTimeout);timers=[];
- $$('[data-to]').forEach(n=>{const to=+n.dataset.to;n.textContent='0';
-  timers.push(setTimeout(()=>{const t0=performance.now();(function f(t){
-   if(!playing){requestAnimationFrame(f);return}
-   const p=Math.min(1,(t-t0)/1400);n.textContent=Math.round(to*(1-Math.pow(1-p,3)));
-   if(p<1&&cur===4)requestAnimationFrame(f);else if(cur===4)n.textContent=to})(t0)},1100))});
-}
-function restart(s){s.classList.remove('on');void s.offsetWidth;s.classList.add('on')}
-function go(i){
- cur=i;el=0;ended=false;playing=true;document.body.classList.remove('paused');
- intro.classList.remove('on');
- scenes.forEach((s,k)=>{if(k===i)restart(s);else s.classList.remove('on')});
- if(i===4)counts();
- ui();
-}
-function ui(){
- pp.hidden=!auto;
- pp.textContent=ended?'↻':playing?'❚❚':'▶';pp.setAttribute('aria-label',ended?'Replay':playing?'Pause':'Play');
- prev.disabled=!started||cur===0;next.disabled=!started||cur===4;
- mode.setAttribute('aria-checked',auto);
- [...chips.children].forEach((c,k)=>c.setAttribute('aria-current',started&&k===cur));
-}
-function startPres(){started=true;document.body.classList.remove('intro-mode');go(0);wake()}
-function showIntro(){
- started=false;document.body.classList.add('intro-mode');document.body.classList.remove('paused');
- scenes.forEach(s=>s.classList.remove('on'));restart(intro);ui();
-}
-function tick(now){
- const dt=Math.min(now-last,100);last=now;
- if(started&&auto&&playing&&!ended){el+=dt;
-  if(el>=D[cur]*1000){if(cur<4){go(cur+1)}else{el=D[4]*1000;ended=true;ui()}}}
- segs.forEach((b,k)=>b.style.transform='scaleX('+(!started?0:k<cur?1:k===cur?(auto?Math.min(1,el/(D[cur]*1000)):1):0)+')');
- requestAnimationFrame(tick);
-}
-function toggle(){
- if(!auto)return;
- if(ended){go(0);return}
- playing=!playing;document.body.classList.toggle('paused',!playing);ui();wake();
-}
-function setAuto(v){
- auto=v;
- if(v){go(cur)}else{playing=true;ended=false;document.body.classList.remove('paused');ui()}
- wake();
-}
-function step(d){go(Math.max(0,Math.min(4,cur+d)))}
-function wake(){ctl.classList.remove('idle');clearTimeout(idle);idle=setTimeout(()=>{if(started&&auto&&playing)ctl.classList.add('idle')},3000)}
-pp.onclick=toggle;prev.onclick=()=>step(-1);next.onclick=()=>step(1);
-mode.onclick=()=>setAuto(!auto);
-$('#home').onclick=showIntro;$('#start').onclick=startPres;$('#replay').onclick=()=>go(0);
-addEventListener('keydown',e=>{
- if(!started)return;
- const k=e.key;
- if(k===' '&&!/^(BUTTON|A)$/.test(document.activeElement.tagName)){e.preventDefault();toggle()}
- else if(k==='ArrowRight')step(1);
- else if(k==='ArrowLeft')step(-1);
- wake();
+
+NAMES.forEach((n,i)=>{
+  const b=document.createElement('button');
+  b.className='cb';
+  b.innerHTML='0'+(i+1)+' <span class="l">'+n+'</span>';
+  b.onclick=()=>go(i);
+  chips.appendChild(b);
 });
-let sx=0,sy=0;const stage=$('#stage');
+
+function counts(){
+  timers.forEach(clearTimeout);timers=[];
+  $$('[data-to]').forEach(n=>{
+    const to=+n.dataset.to;n.textContent='0';
+    timers.push(setTimeout(()=>{
+      const t0=performance.now();
+      (function f(t){
+        if(!playing){requestAnimationFrame(f);return}
+        const p=Math.min(1,(t-t0)/1400);
+        n.textContent=Math.round(to*(1-Math.pow(1-p,3)));
+        if(p<1&&cur===4)requestAnimationFrame(f);
+        else if(cur===4)n.textContent=to;
+      })(t0)
+    },1100));
+  });
+}
+
+function restart(s){s.classList.remove('on');void s.offsetWidth;s.classList.add('on')}
+
+function go(i){
+  cur=i;el=0;ended=false;playing=true;document.body.classList.remove('paused');
+  intro.classList.remove('on');
+  scenes.forEach((s,k)=>{if(k===i)restart(s);else s.classList.remove('on')});
+  if(i===4)counts();
+  ui();
+}
+
+function ui(){
+  pp.hidden=!auto;
+  pp.textContent=ended?'↻':playing?'❚❚':'▶';
+  pp.setAttribute('aria-label',ended?'Replay':playing?'Pause':'Play');
+  prev.disabled=!started||cur===0;
+  next.disabled=!started||cur===4;
+  mode.setAttribute('aria-checked',auto);
+  [...chips.children].forEach((c,k)=>c.setAttribute('aria-current',started&&k===cur));
+}
+
+function startPres(){started=true;document.body.classList.remove('intro-mode');go(0);wake()}
+
+function showIntro(){
+  started=false;
+  document.body.classList.add('intro-mode');
+  document.body.classList.remove('paused');
+  scenes.forEach(s=>s.classList.remove('on'));
+  restart(intro);
+  ui();
+}
+
+function tick(now){
+  const dt=Math.min(now-last,100);last=now;
+  if(started&&auto&&playing&&!ended){
+    el+=dt;
+    if(el>=D[cur]*1000){
+      if(cur<4){go(cur+1)}
+      else{el=D[4]*1000;ended=true;ui()}
+    }
+  }
+  segs.forEach((b,k)=>b.style.transform='scaleX('+(!started?0:k<cur?1:k===cur?(auto?Math.min(1,el/(D[cur]*1000)):1):0)+')');
+  requestAnimationFrame(tick);
+}
+
+function toggle(){
+  if(!auto)return;
+  if(ended){go(0);return}
+  playing=!playing;
+  document.body.classList.toggle('paused',!playing);
+  ui();
+  wake();
+}
+
+function setAuto(v){
+  auto=v;
+  if(v){go(cur)}
+  else{playing=true;ended=false;document.body.classList.remove('paused');ui()}
+  wake();
+}
+
+function step(d){go(Math.max(0,Math.min(4,cur+d)))}
+
+function wake(){
+  ctl.classList.remove('idle');
+  clearTimeout(idle);
+  idle=setTimeout(()=>{if(started&&auto&&playing)ctl.classList.add('idle')},3000);
+}
+
+pp.onclick=toggle;
+prev.onclick=()=>step(-1);
+next.onclick=()=>step(1);
+mode.onclick=()=>setAuto(!auto);
+$('#home').onclick=showIntro;
+$('#start').onclick=startPres;
+$('#replay').onclick=()=>go(0);
+
+addEventListener('keydown',e=>{
+  if(!started)return;
+  const k=e.key;
+  if(k===' '&&!/^(BUTTON|A)$/.test(document.activeElement.tagName)){e.preventDefault();toggle()}
+  else if(k==='ArrowRight')step(1);
+  else if(k==='ArrowLeft')step(-1);
+  wake();
+});
+
+let sx=0,sy=0;
+const stage=$('#stage');
 stage.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});
 stage.addEventListener('touchend',e=>{
- if(!started||auto)return;
- const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;
- if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.5)step(dx<0?1:-1);
+  if(!started||auto)return;
+  const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;
+  if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.5)step(dx<0?1:-1);
 },{passive:true});
+
 ['pointermove','pointerdown','touchstart'].forEach(ev=>addEventListener(ev,wake,{passive:true}));
-function fit(){all.forEach(s=>{const f=s.firstElementChild;f.style.transform='none';const c=getComputedStyle(s);
- const aw=s.clientWidth-parseFloat(c.paddingLeft)-parseFloat(c.paddingRight),ah=s.clientHeight-parseFloat(c.paddingTop)-parseFloat(c.paddingBottom);
- const k=Math.min(1,aw/Math.max(f.scrollWidth,1),ah/Math.max(f.offsetHeight,1));f.style.transform=k<.999?'scale('+k.toFixed(3)+')':'none'})}
-function initFit(){all.forEach(s=>{const f=document.createElement('div');f.className='fit';while(s.firstChild)f.appendChild(s.firstChild);s.appendChild(f)});
- fit();new ResizeObserver(fit).observe(stage);if(document.fonts)document.fonts.ready.then(fit)}
-initFit();showIntro();wake();requestAnimationFrame(t=>{last=t;tick(t)});
+
+function fit(){
+  all.forEach(s=>{
+    const f=s.firstElementChild;
+    f.style.transform='none';
+    const c=getComputedStyle(s);
+    const aw=s.clientWidth-parseFloat(c.paddingLeft)-parseFloat(c.paddingRight),
+          ah=s.clientHeight-parseFloat(c.paddingTop)-parseFloat(c.paddingBottom);
+    const k=Math.min(1,aw/Math.max(f.scrollWidth,1),ah/Math.max(f.offsetHeight,1));
+    f.style.transform=k<.999?'scale('+k.toFixed(3)+')':'none';
+  });
+}
+
+function initFit(){
+  all.forEach(s=>{
+    const f=document.createElement('div');
+    f.className='fit';
+    while(s.firstChild)f.appendChild(s.firstChild);
+    s.appendChild(f);
+  });
+  fit();
+  new ResizeObserver(fit).observe(stage);
+  if(document.fonts)document.fonts.ready.then(fit);
+}
+
+initFit();
+showIntro();
+wake();
+requestAnimationFrame(t=>{last=t;tick(t)});
 })();
 </script>
 </body>
