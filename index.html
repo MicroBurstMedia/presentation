@@ -43,7 +43,7 @@ html {
 
 body {
   display: grid;
-  grid-template-rows: auto 1fr auto auto;
+  grid-template-rows: auto 1fr auto;
   background: radial-gradient(ellipse at 50% 0, #1a2a4a 0, var(--bg) 60%);
   color: var(--tx);
   font-family: var(--sans);
@@ -57,10 +57,11 @@ body::before {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  opacity: .14;
+  opacity: .5;
   background: linear-gradient(var(--bd) 1px, transparent 1px) 0 0/48px 48px, linear-gradient(90deg, var(--bd) 1px, transparent 1px) 0 0/48px 48px;
   -webkit-mask-image: radial-gradient(ellipse at center, #000 0, transparent 70%);
   mask-image: radial-gradient(ellipse at center, #000 0, transparent 70%);
+  opacity: .14;
 }
 
 .mono { font-family: var(--mono); }
@@ -105,7 +106,7 @@ body::before {
 
 #ctl.idle { opacity: 0; }
 #ctl:hover, #ctl:focus-within { opacity: 1; }
-.intro-mode #bar, .intro-mode #ctl { display: none; }
+.intro-mode #bar, .intro-mode #ctl { opacity: 0 !important; pointer-events: none; }
 
 button { font: inherit; color: var(--tx); cursor: pointer; }
 
@@ -128,10 +129,7 @@ button:focus-visible { outline: 2px solid var(--bl); outline-offset: 2px; }
 /* ==========================================================================
    3. DESKTOP VIEW STYLES & LAYOUTS
    ========================================================================== */
-#stage {
-  position: relative;
-  min-height: 0;
-}
+#stage { position: relative; min-height: 0; }
 
 .scene {
   position: absolute;
@@ -146,6 +144,7 @@ button:focus-visible { outline: 2px solid var(--bl); outline-offset: 2px; }
   visibility: hidden;
   overflow: hidden;
   text-align: center;
+  padding-bottom: 56px;
 }
 
 .scene.on { opacity: 1; visibility: visible; }
@@ -337,10 +336,16 @@ ul.ck li { display: flex; gap: 10px; align-items: center; font-family: var(--mon
 }
 
 #foot {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 12px;
   text-align: center;
-  font: .68rem/1.5 var(--mono);
-  color: #8393A9;
-  padding: 4px 16px 12px;
+  font: .68rem var(--mono);
+  color: #64748B;
+  padding: 0 14px;
+  pointer-events: none;
+  z-index: 2;
 }
 
 .led { display: grid; gap: 12px; }
@@ -353,7 +358,10 @@ ul.ck li { display: flex; gap: 10px; align-items: center; font-family: var(--mon
 .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: min(580px, 100%); }
 
 @media (max-width: 760px) {
-  .scene { gap: 12px; }
+  .scene {
+    gap: 12px;
+    padding-bottom: 60px; /* Increased bottom padding to prevent crowding against the footer */
+  }
   .led .big { font-size: 1.05rem; }
   .pair .badge { font-size: .66rem; }
 }
@@ -388,14 +396,6 @@ a.cta { color: var(--tx); }
 
 .intro ul.ck li { align-items: center; }
 .intro ul.ck .badge { min-width: 4.6rem; text-align: center; }
-.hd2 { margin: 0; font-weight: 800; font-size: clamp(1.3rem, 3.4vw, 2.1rem); line-height: 1.15; letter-spacing: -.02em; max-width: 26ch; }
-
-@media (max-width: 760px), (max-aspect-ratio: 1/1) {
-  #ctl { gap: 6px; padding: 8px 10px 6px; }
-  #chips { gap: 4px; }
-  .cb { padding: 8px 10px; }
-  .mode { padding: 7px 10px; }
-}
 </style>
 </head>
 <body class="intro-mode">
@@ -410,7 +410,7 @@ a.cta { color: var(--tx); }
   <section class="scene intro wide">
     <div class="tag a" style="--d:.1s">MicroBurstMedia • an AI Tech Startup Presents:</div>
     <h1 class="a" style="--d:.2s">Interlink Automation</h1>
-    <h2 class="a hd2" style="--d:.2s">Where Workflows Are Built for Business Operations and System Processing</h2>
+    <h2 class="a" style="--d:.2s">Where Workflows Are Built for Business Operations and System Processing</h2>
     <p class="sub a" style="--d:.5s;max-width:48ch">Learn how we assemble an e-commerce workflow with use of a social media bio, a landing page and a payment processor together into a fixed pathway that collects payment, delivers instantly and pays out to your business bank online.</p>
     <div class="card a" style="--d:.8s;max-width:580px">
       <div class="ttl" style="margin:0 0 4px">What you’ll see</div>
@@ -433,8 +433,8 @@ a.cta { color: var(--tx); }
     <div class="card a" style="--d:.8s;max-width:580px">
       <div class="row"><span class="ttl" style="margin:0">System readiness check</span><span class="badge hold">PREREQUISITES</span></div>
       <ul class="ck" style="gap:12px">
-        <li class="a" style="--d:1.4s"><span class="tick" style="--d:1.4s">✓</span>Business Credentials Required</li>
-        <li class="a" style="--d:2.4s"><span class="tick" style="--d:2.4s">✓</span>Payment Processor Active</li>
+        <li class="a" style="--d:1.4s"><span class="tick" style="--d:1.4s"></span>Business Credentials Required</li>
+        <li class="a" style="--d:2.4s"><span class="tick" style="--d:2.4s"></span>Payment Processor Active</li>
       </ul>
       <div class="stock a row" style="--d:3.4s;margin-bottom:0;background:rgba(16,185,129,.1);color:var(--tx)"><span>Feature check: Payment Link Generator</span><span class="badge paid">VERIFIED</span></div>
     </div>
@@ -456,7 +456,7 @@ a.cta { color: var(--tx); }
       <div class="card a" style="--d:.9s">
         <div class="row"><span class="sm">Self-checkout page</span><span class="badge blue">PAYWALL</span></div>
         <div class="ttl">Payment Link Generator</div>
-        <div class="slot a" style="--d:2.7s;margin:8px 0 12px;color:var(--em);border-style:solid;word-break:break-all">pay.link/checkout → drive.link/digital-asset-v1</div>
+        <div class="slot a" style="--d:2.7s;margin:8px 0 12px;color:var(--em);border-style:solid;word-break:break-all">pay.link/checkout drive.link/digital-asset-v1</div>
         <div class="sw">
           <div class="s1"><span class="badge hold">Status: Locked Until Paid</span></div>
           <div class="s2"><span class="badge paid">Auto-Redirects Upon Approval</span></div>
@@ -494,7 +494,7 @@ a.cta { color: var(--tx); }
       <div class="link" style="--d:5s"><i></i></div>
       <div class="node a" style="--d:.96s"><div class="box" style="--l:6.6s"><div class="n">04</div><h3>Cloud Drive / Booking</h3><div class="sm">Instant Delivery</div></div></div>
     </div>
-    <div class="toast a" style="--d:7.8s"><b style="color:var(--em)">Delivered ✓</b> Purchase complete. No manual steps.</div>
+    <div class="toast a" style="--d:7.8s"><b style="color:var(--em)">Delivered </b> Purchase complete. No manual steps.</div>
   </section>
 
   <!-- Scene 5: Payout -->
@@ -508,7 +508,7 @@ a.cta { color: var(--tx); }
     <div class="drop"></div>
     <div class="pair">
       <div class="card a" style="--d:5.6s"><div class="sm">Business Bank Account</div><div style="margin-top:6px"><span class="badge paid">Payout Scheduled</span></div></div>
-      <div class="card a" style="--d:5.9s"><div class="sm">Customer</div><div style="margin-top:6px"><span class="badge blue">🔓 Delivery Link Unlocked</span></div></div>
+      <div class="card a" style="--d:5.9s"><div class="sm">Customer</div><div style="margin-top:6px"><span class="badge blue"> Delivery Link Unlocked</span></div></div>
     </div>
     <p class="sub a" style="--d:8s;color:var(--tx);font-weight:600">MicroBurstMedia — Connect the clicks. Deliver the value.</p>
     <div class="ctas">
@@ -517,10 +517,11 @@ a.cta { color: var(--tx); }
       <a href="https://microburstmedia.github.io/sales-campaign/?utm_source=ig&utm_medium=social&utm_content=link_in_bio&fbclid=PAZXh0bgNhZW0CMTEAcGRvZgJzcnRjBmFwcF9pZA85MzY2MTk3NDMzOTI0NTkAAaecSrmLBs2dInhsok2XqKTvXKdj_Ci0TDd-gPo1vhnkhyR8gHvYw5pTYNUpJg_aem_Y5o9CvxLvDarFPFSzlIltQ" class="cta p a" style="--d:9s;text-decoration:none;display:inline-block;text-align:center;color:var(--tx)">Access Setup Guide</a>
     </div>
   </section>
+  <div id="foot">© 2026 Digital Marketing Network, MicroBurstMedia • Designed for Business Purposes • Informational only, not financial advice.</div>
 </main>
 
 <!-- ==========================================================================
-   6. NAVIGATION & FOOTER CONTROLS
+   6. NAVIGATION CONTROLS
    ========================================================================== -->
 <nav id="ctl" aria-label="Presentation controls">
   <button class="cb" id="home" aria-label="Back to introduction">⌂</button>
@@ -530,8 +531,6 @@ a.cta { color: var(--tx); }
   <button class="cb" id="next" aria-label="Next scene">›</button>
   <button class="mode" id="mode" role="switch" aria-checked="true" aria-label="Auto-play"><span class="lm">Manual</span><i></i><span class="la">Auto</span></button>
 </nav>
-
-<footer id="foot">© 2026 Digital Marketing Network, MicroBurstMedia • Designed for Business Purposes • Informational only, not financial advice.</footer>
 
 <!-- ==========================================================================
    7. INTERACTIVE JAVASCRIPT ENGINE
